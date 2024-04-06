@@ -1,0 +1,11 @@
+{% extends "welcome_page.html" %}
+{% block content %}
+<html>
+    <body>
+        <div class="col-xl-10 p-xl-10 pt-xl-5 offset-md-4" text-align="center;">
+            <button class="btn btn-success" style="border-radius:50px;" ><a href="{{url_for('seating_chart_type')}}">Seating Chart (Type)</a></button>
+            <button class="btn btn-success" style="border-radius:30px;" ><a href="{{url_for('seating_chart_upload')}}">Seating Chart (Upload)</a></button>
+        </div>
+    </body>
+</html>
+{% endblock %}

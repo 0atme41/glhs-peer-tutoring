@@ -1,0 +1,49 @@
+{% extends "welcome_page.html" %}
+{% block content %}
+
+
+    <html lang = "en">
+        <head>
+            <title>Peer Tutoring App</title>
+        </head>
+
+        <body>
+            <p></p>
+            <p></p>
+            <div class="col-xl-4 p-xl-10 pt-xl-3 offset-md-4" width= "100%">
+                <h1>Peer Tutoring App</h1>
+                <small>This application is designed to assist in matching peer tutors with students. Please input your name, subject, and WCPSS email.</small>
+                <br>
+                <br>
+                <form style="font-family: 'Roboto slab', serif;" action="{{ url_for('peer_tutors_code') }}" method="POST">
+                    <div class="form-group">
+                        <label for="students">Names of Student:</label>
+                        <input class="form-control me-2" id="studentsType" name="studentsType" placeholder="First and Last Name" style="border-radius:30px;">
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <label for="subjects">Choose a Subject:</label>
+                        <select name="subjects" id="subjects" class="form-control me-2" style="border-radius:30px;">
+                            {% for subject in subjects %}
+                                    <option value={{ subject }}>{{ subject }}</option>
+                            {% endfor %}
+                            </select>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <label for="email">Student WCPSS Email:</label>
+                        <input class="form-control" id="email" name="email" type="email" placeholder="abc@students.wcpss.net" min=1 style="border-radius:30px;">
+                    </div>
+                    <br>
+                    <button type="submit" class="btn btn-outline-success" style="border-radius:30px;">Submit</button>
+                    <br><br>
+
+                </form>
+            </div>
+        </body>
+    </html>
+
+{% endblock %}
+
+
+

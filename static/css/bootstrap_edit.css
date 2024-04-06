@@ -1,0 +1,214 @@
+.navbar {
+    font-family: 'Roboto Slab', serif;
+    font-size: 2.5vh;
+    background-color: #101010;
+    height: 12vh;
+}
+
+p {
+    font-family: 'Roboto Slab', serif;
+}
+
+h3,h1 {
+    font-family: 'Roboto Slab', serif;
+}
+
+h4 {
+    font-family: 'Roboto Slab', serif;
+    font-size: 2.5vh;
+}
+
+li.text-start {
+    font-family: 'Roboto Slab', serif;
+    font-size: 1.5vh;
+}
+
+.form-control {
+    font-family: 'Roboto Slab', serif;
+}
+
+.navbar-nav.justify-content-start {
+    color: #e8e8e8;
+}
+
+.navbar-nav.justify-content-start:hover {
+    color: white;
+}
+
+html {
+    background-color: #f5f5f5;
+}
+
+body {
+    background-color: #f5f5f5;
+}
+
+.dropdown-menu {
+    background-color: #404040;
+    border-color: #404040;
+    border-radius: 0px;
+}
+
+.dropdown-item {
+    color: #cccccc;
+}
+
+.dropdown-item:hover {
+    color: #cccccc;
+    background-color: #545454;
+}
+
+.navbar .nav-item:hover .dropdown-menu{
+    display: block;
+}
+
+.nav-link {
+    color: #cccccc;
+}
+
+.nav-link:hover {
+    color: #e8e8e8;
+}
+
+.dropdown-toggle {
+    color: #cccccc;
+}
+
+.dropdown-toggle:hover {
+    color: #e8e8e8;
+}
+
+.card {
+    background-color: #eaeaea;
+    border-color: #f5f5f5;
+    font-family: 'Roboto Slab', serif;
+    overflow: hidden;
+    border-radius: 0px;
+    transition: .4s;
+}
+
+.card:hover {
+    background-color: #404040;
+    color: #e8e8e8;
+}
+
+.carousel {
+    overflow: hidden;
+    height: 88vh;
+}
+
+.carousel-item {
+    height: 88vh;
+    object-fit: cover;
+}
+
+.card-img-top {
+    overflow: hidden;
+    aspect-ratio: 16/10;
+    object-fit: cover;
+    border-radius: 0px;
+}
+
+.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(16, 16, 16, 0.5);
+  width: 35vh;
+  height: 30vh;
+  font-family: 'Roboto Slab', serif;
+  color: white;
+}
+
+.centered h1 {
+    font-size: 3.5vh;
+}
+
+.centered p {
+    font-size: 1.9vh;
+}
+
+.carousel-item.active {
+    height: 88vh;
+    object-fit: cover;
+    position: relative;
+    text-align: center;
+}
+
+.carousel-item.active:hover img {
+    transform: scale(1.05);
+}
+
+.carousel-item.active img {
+    width: 100%;
+    transition: 0.2s all ease-in-out;
+    height: 88vh;
+    object-fit: cover;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.scroll-container {
+  height: 65vh;
+  min-height: 100px;
+  padding: 2rem 1rem;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.scroll-element {
+  width: 100%;
+  height: 100%;
+  background-color: #eaeaea;
+}
+
+@media screen and (max-width: 650px) {
+  .scroll-container,
+  .scroll-container:nth-of-type(even) {
+    flex-direction: column;
+    align-content: inherit;
+  }
+
+  .scroll-element {
+    height: 100%;
+  }
+
+  .scroll-element, .scroll-caption {
+    width: 100%;
+  }
+}
+
+.js-scroll {
+  opacity: 0;
+  transition: opacity 500ms;
+}
+
+.js-scroll.scrolled {
+  opacity: 1;
+}
+
+.scrolled.fade-in-bottom {
+  animation: fade-in-bottom 1s ease-in-out both;
+}
+
+@keyframes fade-in-bottom {
+  0% {
+    -webkit-transform: translateY(50px);
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.comment-box {
+    background-color: #dcdcdc;
+}
