@@ -8,16 +8,11 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from werkzeug.utils import secure_filename
 import cairo, random, csv
 from fpdf import FPDF
 from email_validator import validate_email, EmailNotValidError
 from datetime import datetime
 import time
-import base64
-import xlrd
-import pandas as pd
-import arcade
 import csv
 
 os.environ["TZ"] = "America/New_York"
