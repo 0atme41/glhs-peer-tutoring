@@ -1,3 +1,5 @@
+# Notice - Please read the README in the new tutoring branch.
+
 # Connecting to the Server
 This will explain exactly how to SSH into the Lightsail instance for VS Code and GitHub Codespaces users. The commands are the same if you use another text editor, as long as you're using Bash.
 
