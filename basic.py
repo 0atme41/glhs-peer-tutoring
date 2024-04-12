@@ -20,19 +20,19 @@ import bcrypt
 
 os.environ["TZ"] = "America/New_York"
 
-login_manager = LoginManager()
+#login_manager = LoginManager()
 
 app = Flask(__name__)
 
-login_manager.init_app(app)
-login_manager.login_view = 'login'
+#login_manager.init_app(app)
+#login_manager.login_view = 'login'
 
 subjects = []
 with open('classList.txt', 'r') as classFile:
     subjects = classFile.readlines()
 
 currentdirectory = "csgator"
-
+'''
 def unique_check(username, email):
     connection = sqlite3.connect(currentdirectory + "/classes.db")
     cursor = connection.cursor()
@@ -43,21 +43,23 @@ def unique_check(username, email):
         return False
     return True
 
-def create_account(username, email, password):
-    connection = sqlite3.connect(currentdirectory + "/classes.db")
+def register_student(fn, ln, email, subject):
+    connection = sqlite3.connect(currentdirectory + "/tutoring.db")
     cursor = connection.cursor()
     
     if not unique_check(username, email):
         return False
+    
     salt = bcrypt.gensalt(rounds=16)
     str_password = password
     password = bytes(password, 'utf-8')
     password_hash = bcrypt.hashpw(password, salt)
+    
 
-    cursor.execute("INSERT INTO users (username, email, account_type, hash) VALUES (?, ?, ?, ?)", (username, email, "admin", password_hash))
+    cursor.execute("INSERT INTO students (fn, ln, email, subject) VALUES (?, ?, ?, ?)", (fn, ln, email, subject))
     connection.commit()
     
-    login_func(username, str_password)
+    login_func(email)
     return True
 
 def login_func(username, password):
@@ -101,15 +103,13 @@ class User(UserMixin):
 
     def __init__(self, user_id, ln, fn, email, account_type, t_id, cur_capacity, full_capacity):
         if account_type == "Student":
-            self.user_id = user_id * 2
+            self.user_id = email
             self.t_id = t_id
-            self.email = email
             self.ln = ln
             self.fn = fn
             self.account_type = account_type
         elif account_type == "Tutor":
-            self.user_id = t_id * 2 + 1
-            self.email = email
+            self.user_id = email
             self.ln = ln
             self.fn = fn
             self.cur_capacity = cur_capacity
@@ -125,7 +125,7 @@ class User(UserMixin):
     def add_subject(self, subject):
         self.subjects.append(subject)
 
-'''
+
 class Comment(db.Model):
     __tablename__ = 'comments'
     id = db.Column(db.Integer, primary_key = True)
@@ -561,10 +561,29 @@ def roster():
 def together():
     return render_template("together.html")
 
-@app.route('/peer-tutors')
+@app.route('/peer-tutors', methods=['GET', 'POST'])
 def peer_tutors():
+    connection = sqlite3.connect("tutoring.db")
+    cursor = connection.cursor()
+
+    fn = request.form.get('fn')
+    ln = request.form.get('ln')
+    email = request.form.get('email')
+    subject = request.form.get('subject')
+
+    t_id = []
+    if subject:
+        subject = subject.strip()
+        t_id = cursor.execute("SELECT t_id FROM tutors WHERE subject = ?", (subject,)).fetchall()
+
+    if len(t_id) == 0:
+        t_id = 0
+    else:
+        t_id = t_id[0]
+
     return render_template('peer_tutors.html', subjects=subjects)
 
+'''
 @app.route('/peer_tutors_code', methods=['GET', 'POST'])
 def peer_tutors_code():
     userName = request.form.get('name')
@@ -665,7 +684,7 @@ def peer_tutors_code():
 
 
     return render_template('peer_tutors_found.html', tutorIDs=tutorID)
-
+'''
 
 '''
 @app.route('/forum', methods=['GET','POST'])
