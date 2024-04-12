@@ -42,19 +42,6 @@
                     <li><a class="dropdown-item" href="{{ url_for('CSS') }}">HTML/CSS</a></li>
                   </ul>
                 </li>
-                {% if current_user.is_authenticated %}
-                    {% if current_user.account_type == 'Student' or current_user.account_type == 'Admin' %}
-                    <li class='nav-link m-2'><a href="{{ url_for('forum') }}">Forum</a></li>
-                    {% endif %}
-                    {% if current_user.account_type == 'Admin' %}
-                        <li class='nav-link m-2'><a href="{{ url_for('forum_archive') }}">Archive</a></li>
-                    {% endif %}
-                    <li class='nav-link m-2'><a href="{{ url_for('settings') }}">Settings</a></li>
-                    <li class='nav-link m-2'><a href="{{ url_for('logout') }}">Logout</a></li>
-                {% else %}
-                    <li class='nav-link m-2'><a href="{{ url_for('login') }}">Login</a></li>
-                    <li class='nav-link m-2'><a href="{{ url_for('register') }}">Register</a></li>
-                {% endif %}
               </ul>
             </div>
           </div>

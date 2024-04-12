@@ -15,20 +15,14 @@ from email_validator import validate_email, EmailNotValidError
 from datetime import datetime
 import time
 import csv
+import sqlite3
+import bcrypt
 
 os.environ["TZ"] = "America/New_York"
-time.tzset()
 
 login_manager = LoginManager()
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'kmykey'
-basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir,'data.sqlite')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-db = SQLAlchemy(app)
-Migrate(app,db)
 
 login_manager.init_app(app)
 login_manager.login_view = 'login'
@@ -37,51 +31,101 @@ subjects = []
 with open('classList.txt', 'r') as classFile:
     subjects = classFile.readlines()
 
+currentdirectory = "csgator"
+
+def unique_check(username, email):
+    connection = sqlite3.connect(currentdirectory + "/classes.db")
+    cursor = connection.cursor()
+    username_check = cursor.execute("SELECT user_id FROM users WHERE username = ?", (username,)).fetchall()
+    email_check = cursor.execute("SELECT user_id FROM users WHERE email = ?", (email,)).fetchall()
+
+    if username_check or email_check:
+        return False
+    return True
+
+def create_account(username, email, password):
+    connection = sqlite3.connect(currentdirectory + "/classes.db")
+    cursor = connection.cursor()
+    
+    if not unique_check(username, email):
+        return False
+    salt = bcrypt.gensalt(rounds=16)
+    str_password = password
+    password = bytes(password, 'utf-8')
+    password_hash = bcrypt.hashpw(password, salt)
+
+    cursor.execute("INSERT INTO users (username, email, account_type, hash) VALUES (?, ?, ?, ?)", (username, email, "admin", password_hash))
+    connection.commit()
+    
+    login_func(username, str_password)
+    return True
+
+def login_func(username, password):
+    connection = sqlite3.connect(currentdirectory + "/classes.db")
+    cursor = connection.cursor()
+    username_check = cursor.execute("SELECT hash FROM users WHERE username = ?", (username,)).fetchall()
+    if not username_check:
+        return False
+     
+    password_hash = username_check[0][0]
+    password = bytes(password, 'utf-8')
+    password_check = bcrypt.checkpw(password, password_hash)
+    if not password_check:
+        return False
+
+    user_id, email, account_type = cursor.execute("SELECT user_id, email, account_type FROM users WHERE username = ?", (username,)).fetchall()[0]
+
+    new_user = User(str(user_id), username, email, account_type)
+    login_user(new_user)
+    return True
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(user_id)
+    if user_id == "None":
+        return None
+    else:
+        print(type(user_id))
+        return User.get_user(user_id)
 
-class User(db.Model, UserMixin):
-    __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key = True)
-    email = db.Column(db.String(64),unique=True,index=True)
-    username = db.Column(db.String(64),unique=True,index=True)
-    password_hash = db.Column(db.String(128))
-    comment_list = db.relationship('Comment',backref='user',lazy='dynamic')
-    reply_list = db.relationship('Reply',backref='user',lazy='dynamic')
-    account_type = db.Column(db.String)
+class User(UserMixin):
+    users = {}
 
+    @classmethod
+    def get_user(user, user_id):
+        print(user.users[user_id])
+        return user.users[user_id]
+    
+    @classmethod
+    def add_user(user, new_user, user_id):
+        user.users[user_id] = new_user
 
-    def __init__(self,email,username,password,account_type_code):
-        self.email = email
-        self.username = username
-        self.password_hash = generate_password_hash(password)
-        if account_type_code == 'PCdWS0n432i5$IK6B*k$':
-            account_type = 'Admin'
-        elif account_type_code == 'glhs23_$3' and '@students.wcpss.net' in self.email:
-            account_type = 'Student'
-        else:
-            account_type = 'Standard'
-        self.account_type = account_type
+    def __init__(self, user_id, ln, fn, email, account_type, t_id, cur_capacity, full_capacity):
+        if account_type == "Student":
+            self.user_id = user_id * 2
+            self.t_id = t_id
+            self.email = email
+            self.ln = ln
+            self.fn = fn
+            self.account_type = account_type
+        elif account_type == "Tutor":
+            self.user_id = t_id * 2 + 1
+            self.email = email
+            self.ln = ln
+            self.fn = fn
+            self.cur_capacity = cur_capacity
+            self.full_capacity = full_capacity
+            self.account_type = account_type
 
-    def check_password(self,password):
-        return check_password_hash(self.password_hash,password)
+        self.subjects = []
+        User.add_user(self, user_id)
 
-    def set_email(self,new_email):
-        if self.account_type == 'Student' and '@students.wcpss.net' not in new_email:
-            self.account_type = 'Standard'
-        self.email = new_email
+    def get_id(self):
+        return self.user_id
+    
+    def add_subject(self, subject):
+        self.subjects.append(subject)
 
-    def set_type(self,account_type_code):
-        if account_type_code == 'PCdWS0n432i5$IK6B*k$':
-            account_type = 'Admin'
-        elif account_type_code == 'glhs23_$3' and '@students.wcpss.net' in self.email:
-            account_type = 'Student'
-        else:
-            account_type = 'Standard'
-        self.account_type = account_type
-
+'''
 class Comment(db.Model):
     __tablename__ = 'comments'
     id = db.Column(db.Integer, primary_key = True)
@@ -232,6 +276,7 @@ def register():
             login_user(user)
             return redirect(url_for('welcome'))
     return render_template('register.html', helpers=[],email_error=False,username_taken=False,email_taken=False)
+'''
 
 @app.route('/')
 def welcome():
@@ -621,6 +666,8 @@ def peer_tutors_code():
 
     return render_template('peer_tutors_found.html', tutorIDs=tutorID)
 
+
+'''
 @app.route('/forum', methods=['GET','POST'])
 @login_required
 def forum():
@@ -723,5 +770,7 @@ def settings():
                 db.session.commit()
 
     return render_template('settings.html')
+'''
+
 if __name__ == "__main__":
   app.run()
