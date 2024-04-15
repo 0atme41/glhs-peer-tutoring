@@ -12,7 +12,7 @@ app.register_blueprint(homepage_bp)
 app.register_blueprint(student_sign_up_bp)
 app.register_blueprint(tutorials_bp)
 app.register_blueprint(glex_bp)
-app.register_blueprint(projects_bp, url_prefix="/projects")
+app.register_blueprint(projects_bp)
 app.register_blueprint(seating_chart_bp)
 
 currentdirectory = "csgator"

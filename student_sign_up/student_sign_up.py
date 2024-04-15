@@ -4,7 +4,7 @@ import smtplib, ssl
 from email.message import EmailMessage
 
 def email_student(email):
-    connection = sqlite3.connect("tutoring.db")
+    connection = sqlite3.connect("student_sign_up/tutoring.db")
     cursor = connection.cursor()
     fn, subject, t_id = cursor.execute("SELECT fn, subject, t_id FROM students WHERE email = ?", (email,)).fetchall()[-1]
     cursor.close()
@@ -42,7 +42,7 @@ Sincerely, the CSGator Team"""
         s.sendmail("pythonsmtpssltest@gmail.com", email, message.as_string())
     
 def email_tutor(student_email):
-    connection = sqlite3.connect("tutoring.db")
+    connection = sqlite3.connect("student_sign_up/tutoring.db")
     cursor = connection.cursor()
     ln, fn, subject, t_id = cursor.execute("SELECT ln, fn, subject, t_id FROM students WHERE email = ?", (student_email,)).fetchall()[-1]
     cursor.close()
@@ -78,7 +78,7 @@ with open('student_sign_up/static/classList.txt', 'r') as classFile:
 
 @student_sign_up_bp.route('/student-sign-up', methods=['GET', 'POST'])
 def student_sign_up():
-    connection = sqlite3.connect("tutoring.db")
+    connection = sqlite3.connect("student_sign_up/tutoring.db")
 
     fn = request.form.get('fn')
     ln = request.form.get('ln')

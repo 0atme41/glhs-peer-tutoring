@@ -5,7 +5,7 @@ from fpdf import FPDF
 import os
 import csv
 
-seating_chart_bp = Blueprint('seating_chart', __name__, template_folder="templates", static_folder="static", static_url_path="/static/seating_chart")
+seating_chart_bp = Blueprint('seating_chart', __name__, template_folder="templates", static_folder="static", static_url_path="/seating_chart/static")
 
 def seating_chart(new_student_name):
     rectangles = "static/seating_chart/images/rectangles.svg"

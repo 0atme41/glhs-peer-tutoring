@@ -6,7 +6,7 @@
     <div class="carousel-item active">
       <a href="{{ url_for('glex.glex') }}">
           <div class="hover-zoom">
-        <img src="/static/images/ncmap.png" class="d-block w-100" alt="...">
+        <img src="{{ url_for('homepage.static', filename='images/ncmap.png') }}" class="d-block w-100" alt="...">
         </div>
         <div class="centered p-4">
           <h1>Dive into Glex!</h1>
@@ -18,7 +18,7 @@
     <div class="carousel-item">
         <a href="{{ url_for('seating_chart.seating_chart_main_page') }}">
         <div class="hover-zoom">
-      <img src="/static/images/seatingchart.png" class="d-block w-100" alt="...">
+      <img src="{{ url_for('homepage.static', filename='images/seatingchart.png') }}" class="d-block w-100" alt="...">
       </div>
       <div class="centered p-4">
           <h1>Seating Chart</h1>
@@ -65,7 +65,7 @@
       <div class="col-3 me-3">
           <div class="card" style="width: 18rem;">
               <a href="#">
-              <img src="/static/images/mrfox_profile.jfif" class="card-img-top" style="aspect-ratio: 1/1;">
+              <img src="{{ url_for('homepage.static', filename='images/mrfox_profile.jfif') }}" class="card-img-top" style="aspect-ratio: 1/1;">
               <div class="card-body">
                   <h5 class="card-title">Andrew Fox</h5>
                   <p class="card-text">Mr. Fox is the owner of CSGator and teaches computer science at Green Level High School. He works behind the scenes to get CSGator the necessary approval.</p>
@@ -76,7 +76,7 @@
       <div class="col-3">
           <div class="card" style="width: 18rem;">
               <a href="#">
-              <img src="/static/images/sam_profile.jpeg" class="card-img-top" style="aspect-ratio: 1/1;">
+              <img src="{{ url_for('homepage.static', filename='images/sam_profile.jpeg') }}" class="card-img-top" style="aspect-ratio: 1/1;">
               <div class="card-body">
                   <h5 class="card-title">Sam Fishburn</h5>
                   <p class="card-text">Sam is one of the main admins of the CSGator website. He's been working on the homepage, project pages, login system, forum, settings page, and backend of CSGator.</p>
