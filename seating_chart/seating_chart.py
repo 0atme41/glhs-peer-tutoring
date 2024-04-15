@@ -1,195 +1,199 @@
-import cairo
-import os
+from flask import Blueprint, request, render_template
 import random
+import cairo
+from fpdf import FPDF
+import os
+import csv
 
-class Desk():
-    '''Represents desk coordinates and student names'''
+seating_chart_bp = Blueprint('seating_chart', __name__, template_folder="templates", static_folder="static", static_url_path="/static/seating_chart")
 
-    def __init__(self,x,y,ln1,fn1,ln2,fn2,seat,context_in): # Initialization of attributes
-        self.x = x
-        self.y = y
-        self.ln1 = ln1
-        self.fn1 = fn1
-        self.ln2 = ln2
-        self.fn2 = fn2
-        self.midx = x + 150
-        self.midy = y + 100
-        self.seat1 = str(seat)
-        self.seat2 = str(seat + 1)
-        self.endx = x + 300
-        self.context = context_in
+def seating_chart(new_student_name):
+    rectangles = "static/seating_chart/images/rectangles.svg"
+    num_section = int(request.form["num_groups"])
+    desk_in_row = int(request.form["num_columns"])
+    desk_in_column = int(request.form["num_rows"])
+    width = desk_in_row * 460
+    height = desk_in_column * 350 * num_section
+    with cairo.SVGSurface(rectangles, width, height) as surface:
+        context = cairo.Context(surface)
+        context.set_source_rgba(0, 0, 0, 1)
+        def find_space_name(name, x, y):
+            if " " in name:
+                space = name.find(" ")
+                context.stroke()
+                context.move_to(x, y+35)
+                context.show_text(name[0:space])
+                context.stroke()
+                context.move_to(x, y+65)
+                context.show_text(name[space+1:])
+            elif len(name) >= 12:
+                context.stroke()
+                context.move_to(x, y+35)
+                context.show_text(name[0:11] + "-")
+                context.stroke()
+                context.move_to(x, y+65)
+                context.show_text(name[11:])
+            else:
+                context.stroke()
+                context.move_to(x, y+35)
+                context.show_text(name)
 
-    
-    def draw_rect(self): # Desk Outline
-        self.context.set_dash([1,0])
-        self.context.rectangle(self.x,self.y,300,100)
-        self.context.stroke()
+        #first and last name
+        def desk_name(x, y, name, placement):
+            context.move_to(x,y-15)
+            context.set_font_size(25)
+            context.select_font_face("Arial")
+            find_space_name(name[0], x, y-65)
+            find_space_name(name[1], x, y)
+            context.move_to(x, y+115)
+            context.show_text(placement)
 
-    def draw_nums(self): # Desk Numbers, logic ensures alignment to top right corner based on size
-        if len(self.seat1) == 1:
-            x_offset_1 = 14
-        elif len(self.seat1) == 2:
-            x_offset_1 = 20
-        else:
-            x_offset_1 = 30
-        if len(self.seat2) == 1:
-            x_offset_2 = 14
-        elif len(self.seat2) == 2:
-            x_offset_2 = 20
-        else:
-            x_offset_2 = 30
-        self.context.move_to(self.midx-x_offset_1,self.y+15)
-        self.context.show_text(self.seat1)
-        self.context.stroke()
-        self.context.move_to(self.endx-x_offset_2,self.y+15)
-        self.context.show_text(self.seat2)
-        self.context.stroke()
-    
-    def draw_dash(self): # Draws dash separator between halves of desk
-        self.context.set_dash([5])
-        self.context.move_to(self.midx,self.y)
-        self.context.line_to(self.midx,self.midy)
-        self.context.stroke()
+        #rectangle
+        def rectangle_desk(x, y, x_dash, y_dash):
+            context.set_line_width(10)
+            context.set_dash([])
+            context.rectangle(x, y, 400, 200) #(x, y, width, height)
+            context.set_line_join(cairo.LINE_JOIN_BEVEL)
+            context.stroke()
+            context.set_dash([10.0])
+            context.move_to(x_dash, y_dash) #(where,length of line)
+            context.line_to(x_dash, y_dash - 200)
+            context.stroke()
 
-    def name_1(self): # Draws first name, logic checks for 2 names, if is 2 splits between lines
-        self.context.move_to(self.x+10,self.y+30)
-        if ' ' not in self.ln1:
-            self.context.show_text(self.ln1)
-            self.context.stroke()
-        else:
-            ln_split = self.ln1.split(' ')
-            self.context.show_text(ln_split[0])
-            self.context.move_to(self.x+10,self.y+45)
-            self.context.show_text(ln_split[1])
-        
-        self.context.move_to(self.x+10,self.y+70)
-        if ' ' not in self.fn1:  
-            self.context.show_text(self.fn1)
-            self.context.stroke()
-        else:
-            fn_split = self.fn1.split(' ')
-            self.context.show_text(fn_split[0])
-            self.context.move_to(self.x+10,self.y+85)
-            self.context.show_text(fn_split[1])
-            self.context.stroke()
-    
-    def name_2(self): # Draws second name, logic checks for 2 names, if is 2 splits between lines
-        self.context.move_to(self.midx+10,self.y+30)
+        #VARIABLES
+        sections = "abcdefghijklmnopqurstuvwxyz"
+        #desk_number = len(new_student_name)/2   #TOTAL DESKS
+        shuffle_or_no = request.form["shuffle"]
+        if shuffle_or_no[0].upper() == "Y":
+            random.shuffle(new_student_name)
+        placement_num_ltr = [1, sections[0].upper()]
+        if num_section == 1:
+            placement_num_ltr[1] = " "
+        place_name_list = []
 
-        if ' ' not in self.ln2:
-            self.context.show_text(self.ln2)
-            self.context.stroke()
-        else:
-            ln_split = self.ln2.split(' ')
-            self.context.show_text(ln_split[0])
-            self.context.move_to(self.midx+10,self.y+45)
-            self.context.show_text(ln_split[1])
-            self.context.stroke()
+        #name_place_file = open("static/name_place.txt", "r+")
+        x_desk = 30
+        y_desk = 90
+        x_dash = 225
+        y_dash = 285
+        x_name = 50
+        y_name = 160
 
-        self.context.move_to(self.midx+10, self.y+70)
-        if ' ' not in self.fn2:
-            self.context.show_text(self.fn2)
-            self.context.stroke()
-        else:
-            fn_split = self.fn2.split(' ')
-            self.context.show_text(fn_split[0])
-            self.context.move_to(self.midx+10,self.y+85)
-            self.context.show_text(fn_split[1])
-            self.context.stroke()
-    
-    def names(self): # Draws both names
-        self.name_1()
-        self.name_2()
+        for section in range(num_section):
+            if new_student_name == 0:
+                break
+            placement_num_ltr[0] = 1
+            placement_num_ltr[1] = sections[section].upper()
+            if num_section == 1:
+                placement_num_ltr[1] = " "
+            #random.shuffle(main_gym_list)
+            if section == 0:
+                context.move_to(30,60)
+                context.set_font_size(50)
+            else:
+                y_name += 100
+            context.show_text("Section "+ str(sections[section].upper()))
+            for column in range(desk_in_column):
+                for desk in range(desk_in_row):
+                    desks = rectangle_desk(x_desk, y_desk, x_dash, y_dash)
+                    x_desk += 450
+                    x_dash += 450
 
-    def full(self): # Full desk drawing
-        self.draw_rect()
-        self.draw_nums()
-        self.draw_dash()
-        self.names()
-    
-    def student_data_entry_1(self): # Formats right student's data for output
-        return self.ln1 + ', ' + self.fn1 + ' ' + self.seat1
+                for name in range(desk_in_row*2):
+                    if new_student_name != []:
+                        name_pop = new_student_name.pop(0)
+                        name_on_desk = desk_name(x_name, y_name, name_pop, str(placement_num_ltr[0]))
+                        place_name_list.append([[name_pop[1], name_pop[0]], placement_num_ltr[0], placement_num_ltr[1]])
+                        placement_num_ltr[0] += 1
+                        x_name += 200
+                        if name % 2:
+                            x_name += 50
+                x_dash = 225
+                x_desk = 30
+                x_name = 50
+                y_desk += 250
+                y_dash += 250
+                y_name += 250
+                #if column == desk_in_column:
+                #    break
+            y_desk += 100
+            y_dash += 100
+            y_name += 0
+            context.move_to(30, y_name)
+            context.set_font_size(50)
 
-    def student_data_entry_2(self): # Formats left student's data for output
-        return self.ln2 + ', ' + self.fn2 + ' ' + self.seat2
+        context.stroke()
+        #print(place_name_list)
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Arial", size = 12)
+        count = 1
+        for name in place_name_list:
+            pdf.cell(200, 10, txt = str(name[0][0]) + ", " + str(name[0][1]) + " " + str(name[1]) + str(name[2]),
+                ln = 5, align = 'L')
+            count += 1
+        pdf.output("static/seating_chart/images/Roster2.pdf")
+        place_name_list.sort()
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Arial", size = 12)
+        count = 1
+        for name in place_name_list:
+            pdf.cell(200, 10, txt = str(name[0][0]) + ", " + str(name[0][1]) + " " + str(name[1]) + str(name[2]),
+                ln = 5, align = 'L')
+            count += 1
+        pdf.output("static/seating_chart/images/Roster.pdf")
+        return render_template("seating_chart/together.html")
 
-def row_loop(col_lim_in,seat_num_in,y_offset_in,context_in): # Iterates through students to make a row of desks
-    student_entries = []
-    for x in range(col_lim_in): # Makes number of desks that fit within limit
-        student = students_list.pop(0)
-        ln1 = student[0]
-        fn1 = student[1]
 
-        student = students_list.pop(0)
-        ln2 = student[0]
-        fn2 = student[1]
 
-        h_offset = 310 * x + 5
+@seating_chart_bp.route('/seating-chart-type', methods=['GET', 'POST'])
+def seating_chart_type():
+    if request.method == "GET":
+        return render_template("seating_chart/seating_chart_type.html")
 
-        desk_obj = Desk(h_offset,y_offset_in,ln1,fn1,ln2,fn2,seat_num_in,context_in) # Creates desk object
-        desk_obj.full() # Draws desk with method of desk object
-        seat_num_in += 2
-        student_entries.append(desk_obj.student_data_entry_1()) # Updates student location list
-        student_entries.append(desk_obj.student_data_entry_2()) # Updates student location list
-    return student_entries
-   
-def room_loop(rooms_list): # Iterates through 
-    student_locations_out = []
-    for i in rooms_list:
-        global students_list
-        students_list = students_create(i[0])
+    student_names = request.form["studentsType"]
+    new_student_name = student_names.split(",")
+    for student in range(len(new_student_name)):
+        if new_student_name[student].startswith(" "):
+            new_student_name[student] = new_student_name[student][1:]
+        new_student_name[student] = new_student_name[student].title()
+    for student in range(len(new_student_name)):
+        new_student_name[student] = new_student_name[student].split(" ")
 
-        room_name = i[1]
-        col_lim = i[2]
-        row_lim = i[3]
-        row_num = 0
-        seat_num = 1
 
-        print(room_name,str(col_lim),str(row_lim))
+    seating_chart_return = seating_chart(new_student_name)
+    return seating_chart_return
 
-        with cairo.SVGSurface(room_name,col_lim*310 + 5,row_lim*110 + 5) as surface: # Creates canvas, size based on # of rows/columns
-            context = cairo.Context(surface)
-            context.set_source_rgba(0,0,0,1)
-            context.set_line_width(4)
-            context.set_line_join(cairo.LINE_JOIN_MITER)
-            context.select_font_face("Arial", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
-            context.set_font_size(16)
+@seating_chart_bp.route('/seating-chart-upload', methods=['GET', 'POST'])
+def seating_chart_upload():
+    if request.method == "GET":
+        return render_template("seating_chart/seating_chart_upload.html")
+    student_names = request.files["studentsUpload"]
+    #filename = secure_filename(student_names.filename)
+    #basedir = os.path.abspath(os.path.dirname(__file__))
+    if student_names.filename != "":
+        file_path = os.path.join("static/seating_chart/files", student_names.filename)
+        student_names.save(file_path)
+    file_path_str = str(file_path)
+    period_index = file_path_str.find(".")
+    if file_path_str[period_index:] == ".csv":
+        with open(file_path, 'r') as file:
+          csvreader = csv.reader(file)
+          new_student_name = []
+          for row in csvreader:
+                first_name = row[0]
+                last_name = row[1]
+                new_student_name.append([first_name.title(), last_name.title()])
+    elif file_path_str[period_index:] == ".xlsx":
+        pass
+    seating_chart_return = seating_chart(new_student_name)
+    return seating_chart_return
 
-            try:
-                while students_list: # Until student list is empty, makes rows
-                    y_offset = row_num * 110 + 5
-                    row_num += 1
-                    
-                    if row_num == row_lim + 1: # Stops creating rows after max # are created
-                        break
-                    
-                    new_entries = row_loop(col_lim,seat_num,y_offset,context) # Inputs
-                    for i in new_entries:
-                        student_locations_out.append(i + ' ' + room_name)
-                    seat_num += col_lim * 2
-            except:
-                pass
-    return student_locations_out
+@seating_chart_bp.route("/seating_chart_main_page")
+def seating_chart_main_page():
+    return render_template("seating_chart/seating_chart_main_page.html")
 
-def students_create(file_name):
-    ''' Imports .csv file, returns list of names in random order'''
-    roster = open(file_name,'r+')
-    roster_lines = roster.readlines()
-    students = []
-    for i in roster_lines:
-        sep = i.find(',')
-        students.append([i[0:sep],i[sep+1:].strip(',\n')]) # Splits by comma into first and last name ('Doe, John' into ['Doe','John'])
-    roster.close()
-    random.shuffle(students)
-    return students
-
-rooms = [['PSAT Main Gym Roster.csv','Main Gym',10,16],['PSAT Aux Gym Roster.csv','Aux Gym',5,14]]
-
-student_locations = room_loop(rooms)
-student_locations.sort()
-print(student_locations)
-
-student_index = open('Student Index.txt','w+')
-
-for i in range(len(student_locations)):
-    student_index.write('{:5<}. {}\n'.format(i+1,student_locations[i]))
+@seating_chart_bp.route("/seating_chart_webpage")
+def seating_chart_webpage():
+    return render_template("seating_chart/seating_chart_webpage.html")

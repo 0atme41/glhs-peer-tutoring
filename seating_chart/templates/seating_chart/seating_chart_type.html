@@ -1,0 +1,48 @@
+{% extends "index.html" %}
+{% block content %}
+    <html lang = "en">
+        <head>
+            <title>Seating Chart</title>
+        </head>
+
+        <body>
+            <p></p>
+            <p></p>
+            <div class="col-xl-4 p-xl-10 pt-xl-3 offset-md-4" width= "100%">
+                <form style="font-family: 'Roboto slab', serif;" action="{{ url_for('seating_chart.seating_chart_type') }}" method="POST">
+                    <div class="form-group">
+                        <label for="students">Names of Students: </label>
+                        <input class="form-control me-2" id="studentsType" name="studentsType" placeholder="First Last 1, First Last 2, First Last 3" style="border-radius:30px;">
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <label for="num_rows">Number of Rows: </label>
+                        <input class="form-control" id="num_rows" name="num_rows" type ="number" placeholder="#" min=1 style="border-radius:30px;">
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <label for="num_columns">Number of Columns: </label>
+                        <input class="form-control" id="num_columns" name="num_columns" type="number" placeholder="#" min=1 style="border-radius:30px;">
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <label for="num_groups">Number of Groups: </label>
+                        <input class="form-control" id="num_groups" name="num_groups" type="number" placeholder="#" min=1 style="border-radius:30px;">
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <input id="shuffle" type="checkbox" name="shuffle" value="Yes">
+                        <label for="shuffle">Shuffled </label>
+                    </div>
+                    <br>
+                    <button type="submit" class="btn btn-outline-success" style="border-radius:30px;">Submit</button>
+                    <br><br>
+                    <small>Note: Each desk holds two people. Computer view is recommended</small>
+                </form>
+            </div>
+        </body>
+    </html>
+{% endblock %}
+
+
+

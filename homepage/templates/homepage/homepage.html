@@ -1,0 +1,96 @@
+{% extends "index.html" %}
+{% block content %}
+<div class="carousel slide" data-bs-ride="carousel">
+  <div class="carousel-inner">
+
+    <div class="carousel-item active">
+      <a href="{{ url_for('glex.glex') }}">
+          <div class="hover-zoom">
+        <img src="/static/images/ncmap.png" class="d-block w-100" alt="...">
+        </div>
+        <div class="centered p-4">
+          <h1>Dive into Glex!</h1>
+          <p>Glex maps grocery stores in a zip code to identify food deserts. This can be used by nonprofits and charities as a tool to determine where to best direct aid.</p>
+        </div>
+      </a>
+    </div>
+
+    <div class="carousel-item">
+        <a href="{{ url_for('seating_chart.seating_chart_main_page') }}">
+        <div class="hover-zoom">
+      <img src="/static/images/seatingchart.png" class="d-block w-100" alt="...">
+      </div>
+      <div class="centered p-4">
+          <h1>Seating Chart</h1>
+          <p>This seating chart program takes student names and outputs a randomized seating chart that can be used for school exams and testing.</p>
+        </div>
+        </a>
+    </div>
+  </div>
+</div>
+<div class="container text-center">
+  <div class="row justify-content-center">
+      <div class="col-10">
+          <div class="scroll-container">
+              <div class="scroll-element js-scroll fade-in-bottom">
+                  <h1 class = 'm-4' style = "font-family: 'Roboto Slab', serif; font-size: 3.5vh">What is CSGator?</h1>
+                  <p class = 'm-4' style = "font-family: 'Roboto Slab', serif; font-size: 1.9vh">
+                      CSGator is a website created and run by computer science students at Green Level High School.
+                      The original idea was for the site to act as a portfolio for students, hosting all the amazing
+                      projects computer science students create, but the end goal has grown to include tutorials
+                      (which are currently being developed) and a discussion board for student collaboration.
+                      Projects range from games students have created to possible solutions to global problems. Our
+                      tutorials will give students the foundations for coding in Python, Java, C++, and skills for
+                      other computer science topics like web development. Here at CSGator we want to provide an opportunity
+                      for students to develop relationships with universities and connect with industry professionals.
+                      Our students have dedicated many hours to amazing projects, and we want to provide an outlet for
+                      them to show off their work.
+                  </p>
+                  <h1 class = 'm-4' style = "font-family: 'Roboto Slab', serif; font-size: 3.5vh">What can CSGator do for you?</h1>
+                  <p class = 'm-4' style = "font-family: 'Roboto Slab', serif; font-size: 1.9vh">
+                      CSGator offers many resources to help students develop their knowledge of computer science and coding.
+                      We are currently creating basic computer science tutorials for students who are interested in learning
+                      about programming, and will continue to develop tutorials on more complex topics. We also offer
+                      an online message board where students can collaborate to work through computer science problems. We at
+                      CSGator are dedicated to helping our school community learn about programming and hope to be as helpful a
+                      site as possible.
+                  </p>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+<div class="container text-center mb-4">
+  <div class="row justify-content-center">
+      <div class="col-3 me-3">
+          <div class="card" style="width: 18rem;">
+              <a href="#">
+              <img src="/static/images/mrfox_profile.jfif" class="card-img-top" style="aspect-ratio: 1/1;">
+              <div class="card-body">
+                  <h5 class="card-title">Andrew Fox</h5>
+                  <p class="card-text">Mr. Fox is the owner of CSGator and teaches computer science at Green Level High School. He works behind the scenes to get CSGator the necessary approval.</p>
+              </a>
+              </div>
+          </div>
+      </div>
+      <div class="col-3">
+          <div class="card" style="width: 18rem;">
+              <a href="#">
+              <img src="/static/images/sam_profile.jpeg" class="card-img-top" style="aspect-ratio: 1/1;">
+              <div class="card-body">
+                  <h5 class="card-title">Sam Fishburn</h5>
+                  <p class="card-text">Sam is one of the main admins of the CSGator website. He's been working on the homepage, project pages, login system, forum, settings page, and backend of CSGator.</p>
+              </a>
+              </div>
+          </div>
+      </div>
+  </div>
+  <div class="row justify-content-center" style="font-family: 'Roboto slab', serif;">
+  <div class="col-6 mt-4">
+      <h4>Have a project you want on the site?</h4>
+      <p>If you have a project you want putting on CSGator, fill out this form. We can't guarantee every project a spot, but we'd love to see what you're working on!</p>
+      <a style="color: blue" href="https://forms.gle/V3gbNrNpYZLkTPUJA">Project Request Form</a>
+  </div>
+</div>
+</div>
+{% endblock %}
