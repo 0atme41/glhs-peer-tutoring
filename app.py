@@ -6,6 +6,7 @@ from glex.glex import glex_bp
 from homepage.homepage import homepage_bp
 from projects.projects import projects_bp
 from seating_chart.seating_chart import seating_chart_bp
+from register.register import register_bp
 
 app = Flask(__name__)
 app.register_blueprint(homepage_bp)
@@ -14,6 +15,7 @@ app.register_blueprint(tutorials_bp)
 app.register_blueprint(glex_bp)
 app.register_blueprint(projects_bp)
 app.register_blueprint(seating_chart_bp)
+app.register_blueprint(register_bp)
 
 currentdirectory = "csgator"
 
