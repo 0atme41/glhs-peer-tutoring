@@ -89,7 +89,7 @@ def student_sign_up():
     if subject:
         subject = subject.strip()
         cursor = connection.cursor()
-        t_id = cursor.execute("SELECT t_id FROM tutors WHERE subject = ?", (subject,)).fetchall()
+        t_id = cursor.execute("SELECT t_id FROM tutors WHERE subject1 = ?", (subject,)).fetchall()
         cursor.close()
 
         if len(t_id) == 0:

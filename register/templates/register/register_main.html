@@ -1,0 +1,9 @@
+{% extends "index.html" %}
+{% block content %}
+<div class="col-xl-4 p-xl-10 pt-xl-3 offset-md-4" width= "100%">
+    <h1>Log In</h1>
+    <br>
+    <a href="{{ url_for('register.register_student') }}"><button type="button" class="btn btn-success">Student Registration</button></a>
+    <a href="{{ url_for('register.register_tutor') }}"><button type="button" class="btn btn-success">Tutor Registration</button></a>
+</div>
+{% endblock %}

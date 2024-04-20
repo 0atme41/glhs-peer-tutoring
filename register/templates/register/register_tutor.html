@@ -1,0 +1,46 @@
+{% extends "index.html" %}
+{% block content %}
+<div class="col-xl-4 p-xl-10 pt-xl-3 offset-md-4" width= "100%">
+    <div class="col-xl-4 p-xl-10 pt-xl-3 offset-md-4" width= "100%">
+        <h1>Tutor Registrations</h1>
+        {% if not t_name %}
+            <small>First, we'll see if you're already in our system.</small>
+            <br>
+            <form style="font-family: 'Roboto slab', serif;" action="{{ url_for('register.register_tutor') }}" method="POST">
+                <div class="form-group">
+                    <label for="email">Student Email:</label>
+                    <input class="form-control" id="email" name="email" type="email" placeholder="example@students.wcpss.net" min=1 style="border-radius:30px;">
+                </div>
+                <br>
+                <button type="submit" class="btn btn-outline-success" style="border-radius:30px;">Submit</button>
+            </form>
+        {% elif t_name == "No Email" %}
+            <small>Your email isn't in our system, so let's create a new account for you!</small>
+            <br>
+            <form style="font-family: 'Roboto slab', serif;" action="{{ url_for('register.register_tutor') }}" method="POST">
+                <div class="form-group">
+                    <label for="new_fn">First Name:</label>
+                    <input class="form-control" id="new_fn" name="new_fn" type="text" placeholder="Peter" min=1 style="border-radius:30px;">
+                </div>
+                <br>
+                <div class="form-group">
+                    <label for="new_ln">Last Name:</label>
+                    <input class="form-control" id="new_ln" name="new_ln" type="text" placeholder="Parker" min=1 style="border-radius:30px;">
+                </div>
+                <br>
+                <div class="form-group">
+                    <label for="email">Student Email:</label>
+                    <input class="form-control" id="email" name="email" type="email" placeholder="pparker@students.wcpss.net" min=1 style="border-radius:30px;">
+                </div>
+                <br>
+                <div class="form-group">
+                    <label for="new_password">Password:</label>
+                    <input class="form-control" id="new_password" name="new_password" type="password" min=8 style="border-radius:30px;">
+                </div>
+                <br>
+                <button type="submit" class="btn btn-outline-success" style="border-radius:30px;">Submit</button>
+            </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
