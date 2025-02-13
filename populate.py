@@ -15,6 +15,3 @@ with open ('formatted.csv') as file:
             elif (len(name) > 1):
                 cursor.execute("INSERT INTO tutors (t_ln, t_fn, email, subject1, subject2, subject3, capacity, t_capacity) VALUES (?, ?, ?, ?, ?, ?, 3, 3)", (name[1], name[0], email, focus_classes[0], focus_classes[1], focus_classes[2]))
             connection.commit()
-
-
-

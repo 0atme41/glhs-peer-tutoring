@@ -1,6 +1,5 @@
 from flask import Blueprint, request, render_template
 import random
-import cairo
 from fpdf import FPDF
 import os
 import csv
