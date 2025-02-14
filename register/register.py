@@ -3,7 +3,7 @@ import sqlite3
 
 register_bp = Blueprint('register', __name__, template_folder="templates")
 
-@register_bp.route('/register')
+@register_bp.route('/')
 def register_main():
     return render_template("register/register_main.html")
 

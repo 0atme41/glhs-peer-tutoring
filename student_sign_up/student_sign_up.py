@@ -76,7 +76,7 @@ subjects = []
 with open('student_sign_up/static/classList.txt', 'r') as classFile:
     subjects = classFile.readlines()
 
-@student_sign_up_bp.route('/student-sign-up', methods=['GET', 'POST'])
+@student_sign_up_bp.route('/register-student', methods=['GET', 'POST'])
 def student_sign_up():
     connection = sqlite3.connect("student_sign_up/tutoring.db")
 
